@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 
 import { Box } from './Box';
 import { Section } from './Section/Section';
@@ -10,64 +10,63 @@ import {
   countPositiveFeedbackPercentage,
 } from '../utils/index';
 
-export class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
+export const App = () => {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+
+  const leaveFeedback = option => {
+    switch (option) {
+      case 'good':
+        setGood(state => state + 1);
+        break;
+      case 'neutral':
+        setNeutral(state => state + 1);
+        break;
+      case 'bad':
+        setBad(state => state + 1);
+        break;
+      default:
+        return null;
+    }
   };
 
-  leaveFeedback = option => {
-    this.setState(prevState => ({
-      [option]: prevState[option] + 1,
-    }));
-  };
+  const options = ['good', 'neutral', 'bad'];
 
-  render() {
-    const options = Object.keys(this.state);
-    const { good, neutral, bad } = this.state;
+  const totalFeedbacks = countTotalFeedback(good, neutral, bad);
+  const positivePercent = countPositiveFeedbackPercentage(good, totalFeedbacks);
 
-    const totalFeedbacks = countTotalFeedback(this.state);
-    const positivePercent = countPositiveFeedbackPercentage(
-      good,
-      totalFeedbacks
-    );
-
-    return (
-      <Box
-        as="main"
-        display="flex"
-        flexDirection="column"
-        alignItems="start"
-        style={{
-          height: '100vh',
-          // display: 'flex',
-          // justifyContent: 'center',
-          // alignItems: 'center',
-          fontSize: 40,
-          color: '#010101',
-        }}
-      >
-        <Section title="Please leave feedback">
-          <FeedbackOptions
-            options={options}
-            onLeaveFeedback={this.leaveFeedback}
-          ></FeedbackOptions>
-        </Section>
-        <Section title="Statistics">
-          {totalFeedbacks ? (
-            <Statistics
-              good={good}
-              neutral={neutral}
-              bad={bad}
-              totalFeedbacks={totalFeedbacks}
-              positivePercent={positivePercent}
-            ></Statistics>
-          ) : (
-            <Notification message={'There is no feedback'}></Notification>
-          )}
-        </Section>
-      </Box>
-    );
-  }
-}
+  return (
+    <Box
+      as="main"
+      display="flex"
+      flexDirection="column"
+      alignItems="start"
+      style={{
+        height: '100vh',
+        // display: 'flex',
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        fontSize: 40,
+        color: '#010101',
+      }}
+    >
+      <Section title="Please leave feedback">
+        <FeedbackOptions options={options} onLeaveFeedback={leaveFeedback} />
+      </Section>
+      <Section title="Statistics">
+        {totalFeedbacks ? (
+          <Statistics
+            good={good}
+            neutral={neutral}
+            bad={bad}
+            totalFeedbacks={totalFeedbacks}
+            positivePercent={positivePercent}
+          />
+        ) : (
+          <Notification message={'There is no feedback'} />
+        )}
+      </Section>
+    </Box>
+  );
+};

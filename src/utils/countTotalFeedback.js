@@ -1,3 +1,3 @@
-export function countTotalFeedback(feedbacks) {
-    return (Object.values(feedbacks)).reduce((total, feedback) => (total += feedback), 0);
+export function countTotalFeedback(...feedbacks) {
+  return feedbacks.reduce((total, feedback) => (total += feedback), 0);
 }
